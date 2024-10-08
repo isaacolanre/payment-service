@@ -113,6 +113,7 @@ public class UserService implements UserDetailsService{
                 });
 
         AppUser user = AppUser.builder()
+                .publicId(UUID.randomUUID())
                 .username(userSignupRequest.getUsername())
                 .email(userSignupRequest.getEmail())
                 .password(passwordEncoder.encode(userSignupRequest.getPassword()))
