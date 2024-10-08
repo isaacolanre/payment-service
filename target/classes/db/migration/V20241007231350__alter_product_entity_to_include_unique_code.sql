@@ -1,0 +1,5 @@
+
+
+ALTER TABLE product
+    ADD COLUMN unique_code VARCHAR(255) DEFAULT 'MTN_19399';
+

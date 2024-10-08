@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS user_account
+(
+    id                 BIGSERIAL PRIMARY KEY,
+    balance            NUMERIC(19, 2) DEFAULT 0.00,
+    firstname          VARCHAR(255) NOT NULL,
+    lastname           VARCHAR(255) NOT NULL,
+    account_type       VARCHAR(64)  NOT NULL,
+    account_kyc_level  VARCHAR(64),
+    currency           VARCHAR(3)     DEFAULT 'NGN',
+    overdraft_limit    NUMERIC(19, 2) DEFAULT 0.00,
+    locked_balance     NUMERIC(19, 2) DEFAULT 0.00,
+    lien_amount        NUMERIC(19, 2) DEFAULT 0.00,
+    account_number     VARCHAR(255) UNIQUE,
+    pan                VARCHAR(255) UNIQUE,
+    bvn                VARCHAR(15),
+    public_id          UUID           DEFAULT gen_random_uuid(),
+    is_primary_account BOOLEAN        DEFAULT FALSE,
+    parent_account     BIGINT,
+    account_status     VARCHAR(32)    DEFAULT 'ACTIVE',
+    user_id            BIGSERIAL REFERENCES users (id),
+    created_by         VARCHAR(50)    DEFAULT 'system',
+    created_date       TIMESTAMPTZ    DEFAULT now(),
+    last_modified_by   VARCHAR(50),
+    last_modified_date TIMESTAMPTZ    DEFAULT now(),
+    version            BIGINT         DEFAULT 0
+);
