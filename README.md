@@ -13,9 +13,9 @@ This project is a backend service for a payment company, designed to authenticat
 ### Installation
 
 1. Clone the repository and navigate into the project directory.
-2. Set up your PostgreSQL database by creating a new database named `billpayment_assessment` and updating the database connection settings in the `application.yml` file.
-3. Build the project using Maven.
-4. Run the application with Spring Boot.
+2. Build the project using Maven.
+3. Run the application with Spring Boot.
+4. Make sure Docker is installed and running on your machine.
 
 ### Running Tests
 
@@ -23,4 +23,12 @@ Unit tests are included in the project to validate the code coverage.
 
 ### Notes
 
-Ensure you have a valid account on the Biller Service Test environment portal for VTU API access. Use JWT for secure API authentication, as defined in the `application.yml` file.
+Ensure you have a valid account on the Biller Service Test environment portal for VTU API access.
+
+```bash
+docker compose up -d
+.
+.
+.
+This command will create database for the project automatically.
+```
