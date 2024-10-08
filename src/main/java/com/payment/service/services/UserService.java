@@ -106,7 +106,7 @@ public class UserService implements UserDetailsService{
     }
 
     @Transactional
-    public AppUser registerUser(UserSignupRequest userSignupRequest) {
+    public AppUserBasicProjectionDto registerUser(UserSignupRequest userSignupRequest) {
         userRepository.getUserByEmail(userSignupRequest.getUsername())
                 .ifPresent(user -> {
                     throw new UserAlreadyExistsException("Email is already in use!", false);
@@ -157,8 +157,23 @@ public class UserService implements UserDetailsService{
 
         userRepository.save(user);
         accountRepository.save(account);
+        return new AppUserBasicProjectionDto(
+                user.getPublicId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getKycLevel(),
+                user.getNamespace(),
+                account.getPublicId(),
+                user.getMobile(),
+                user.getEmail(),
+                user.isEmailValidated(),
+                user.getStatus(),
+                user.getGender(),
+                user.getLoginTries(),
+                user.getUsername(),
+                user.isCredentialExpired()
+        );
 
-        return user;
 
     }
 

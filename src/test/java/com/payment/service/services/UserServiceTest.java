@@ -104,10 +104,10 @@ class UserServiceTest {
         when(roleRepository.findByRoleName(RoleName.CUSTOMER)).thenReturn(Optional.of(role));
         when(permissionService.getTransactionPermissions()).thenReturn(new HashSet<>());
 
-        AppUser result = userService.registerUser(signupRequest);
+        AppUserBasicProjectionDto result = userService.registerUser(signupRequest);
 
         assertNotNull(result);
-        assertEquals("newuser@example.com", result.getEmail());
+        assertEquals("newuser@example.com", result.email());
         verify(userRepository, times(1)).save(any(AppUser.class));
         verify(accountRepository, times(1)).save(any(Account.class));
     }
