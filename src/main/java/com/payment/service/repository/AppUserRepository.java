@@ -41,14 +41,14 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long > {
 
 
     Optional<AppUser> findByUsernameAndNamespace(String username, Namespace type);
-//    @Query("""
-//            SELECT new com.payment.service.dto.AppUserAuthProjectionDto(u.password, u.publicId, u.loginTries, u.namespace, u.firstName, u.lastName,u.email,
-//             u.emailValidated, u.mobile, u.blockedUntil, u.publicId)
-//            from AppUser u
-//            where (u.email = :username or u.mobile = :username)
-//                          and u.namespace = :type
-//            """)
-    Optional<AppUser> findByEmailAndNamespace(String username, Namespace type);
+    @Query("""
+            SELECT new com.payment.service.dto.AppUserAuthProjectionDto(u.password, u.publicId, u.loginTries, u.namespace, u.firstName, u.lastName,u.email,
+             u.emailValidated, u.mobile, u.blockedUntil, u.publicId)
+            from AppUser u
+            where (u.email = :username or u.mobile = :username)
+                          and u.namespace = :type
+            """)
+    Optional<AppUserAuthProjectionDto> findByEmailAndNamespace(String username, Namespace type);
     @Query("""
             SELECT new com.payment.service.dto.AppUserAuthProjectionDto(u.password, u.publicId, u.loginTries, u.namespace, u.firstName, u.lastName,u.email,
              u.emailValidated, u.mobile, u.blockedUntil, u.publicId)

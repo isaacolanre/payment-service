@@ -97,7 +97,7 @@ public class UserService implements UserDetailsService{
         var user = userRepository.findByEmailAndNamespace(username, namespace)
                 .orElseThrow(() -> new UserNotFoundException("Can't authenticate successfully. Login again.", false));
 
-        return user.getNamespace();
+        return user.namespace();
     }
 
     public AuthTokenDTO getAuthTokenByUserId(UUID userId) {
