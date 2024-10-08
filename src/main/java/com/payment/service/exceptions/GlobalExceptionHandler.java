@@ -2,18 +2,21 @@ package com.payment.service.exceptions;
 
 
 import com.payment.service.dto.RestResponse;
+import com.payment.service.dto.response.ApiError;
 import com.payment.service.enumerations.InternalExceptionCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -26,7 +29,7 @@ import static com.payment.service.enumerations.InternalExceptionCode.AN_ERROR_OC
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
-@Component
+@ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 
@@ -76,6 +79,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         RestResponse errorDetails = new RestResponse(ex.getMessage(), UNAUTHORIZED, AN_ERROR_OCCURRED, "", Map.of());
         return new ResponseEntity<>(errorDetails, UNAUTHORIZED);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        String errorMessage = "Malformed JSON request. Please check your input.";
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, errorMessage, ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
 }
