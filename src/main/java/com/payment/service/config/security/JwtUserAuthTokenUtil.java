@@ -7,6 +7,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.payment.service.enumerations.Namespace;
+import com.payment.service.models.Role;
 import com.payment.service.services.UserDetailsService;
 import com.payment.service.services.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -48,9 +49,13 @@ public class JwtUserAuthTokenUtil {
         var currentDate = new Date();
         var validity = new Date(currentDate.getTime() + 3_600_000);
         var authorities = new ArrayList<>();
-        authorities.add(namespace);
+        authorities.add(namespace.name());
 
         var user = userService.getUserDetailsById(userId);
+        var roles = user.getUserRoles().stream()
+                .map(role -> role.getRoleName().name())
+                .toList();
+        log.info("User {} has roles {}", userId, roles);
         return JWT.create()
                 .withSubject(user.getEmail())
                 .withIssuer(user.getEmail())
@@ -59,13 +64,13 @@ public class JwtUserAuthTokenUtil {
                 .withClaim("firstName", user.getFirstName())
                 .withClaim("lastName", user.getLastName())
                 .withClaim("email", user.getEmail())
-                .withClaim("roles", user.getUserRoles().stream().toList())
+                .withClaim("roles", roles)
                 .withClaim("authorities", authorities)
                 .sign(Algorithm.HMAC256(secretKey));
     }
     public String generateRefreshToken(UUID userId) {
         var authorities = new ArrayList<>();
-        authorities.add(TOKEN_REFRESH);
+        authorities.add(TOKEN_REFRESH.name());
         var user = userService.getUserDetailsById(userId);
         return JWT
                 .create()

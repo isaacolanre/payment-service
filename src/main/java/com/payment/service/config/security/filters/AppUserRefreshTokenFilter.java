@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.payment.service.config.security.AuthorizationToken;
 import com.payment.service.config.security.AuthorizationTokenService;
 import com.payment.service.config.security.JwtTokenUtil;
+import com.payment.service.dto.AppUserBasicProjectionDto;
 import com.payment.service.dto.response.LoginResponse;
 import com.payment.service.dto.response.UserDetailsDTO;
 import com.payment.service.services.UserService;
@@ -26,6 +27,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.security.interfaces.RSAPublicKey;
+import java.util.UUID;
 
 import static com.payment.service.config.security.Authorities.TOKEN_REFRESH;
 
@@ -73,17 +75,17 @@ public class AppUserRefreshTokenFilter extends OncePerRequestFilter {
         if (jwtTokenUtil.parseToken(requestRefreshToken).getAuthorities().contains(TOKEN_REFRESH))
             throw new AccessDeniedException("Invalid refresh token provided");
 
-        var user = authorizationTokenService.findByRefreshToken(requestRefreshToken)
+        UUID userPublicId = authorizationTokenService.findByRefreshToken(requestRefreshToken)
                 .map(authorizationTokenService::verifyExpiration)
                 .map(AuthorizationToken::getPublicId)
                 .orElseThrow(() -> new AuthenticationException("Refresh token not found") {
                 });
 
-        var userDetails = userService.getUserBasicProjections(user);
+        AppUserBasicProjectionDto  userDetails = userService.getUserBasicProjections(userPublicId);
 
         var roleNames = userService.getUserRoleNames(userDetails.publicId());
 
-        var authorizationToken = authorizationTokenService.createAuthorizationToken(user, userDetails.namespace());
+        var authorizationToken = authorizationTokenService.createAuthorizationToken(userPublicId, userDetails.namespace());
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 

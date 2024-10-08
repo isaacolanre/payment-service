@@ -53,7 +53,7 @@ public class UsernamePasswordAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
 
-        var urlMappings = List.of("/api/users/login",  "/api/v1/users/authenticate/login");
+        var urlMappings = List.of("/api/v1/users/login",  "/api/v1/users/authenticate/login");
 
         if (urlMappings.stream().noneMatch(m -> request.getRequestURL().toString().endsWith(m))) {
             filterChain.doFilter(request, response);
@@ -64,7 +64,7 @@ public class UsernamePasswordAuthenticationFilter extends OncePerRequestFilter {
             JSONObject loginJsonObject = new JSONObject(request.getReader().lines().collect(Collectors.joining()));
 
             var namespace = loginJsonObject.getString("namespace");
-            var username = loginJsonObject.getString("username");
+            var username = loginJsonObject.getString("email");
             var password = loginJsonObject.getString("password");
 
             Authentication authentication = authenticationManager.authenticate(
@@ -79,7 +79,7 @@ public class UsernamePasswordAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            var userNamespace = userService.getNamespace(userDetails.userName(), userDetails.namespace());
+            var userNamespace = userService.getNamespace(userDetails.email(), userDetails.namespace());
 
             getLoginResponse(authorizationToken.getAccessToken(), authorizationToken.getRefreshToken(),
                     response, userDetails, userNamespace, roleNames);

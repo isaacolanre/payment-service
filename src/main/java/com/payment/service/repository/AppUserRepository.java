@@ -41,13 +41,13 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long > {
 
 
     Optional<AppUser> findByUsernameAndNamespace(String username, Namespace type);
-    @Query("""
-            SELECT new com.payment.service.dto.AppUserAuthProjectionDto(u.password, u.publicId, u.loginTries, u.namespace, u.firstName, u.lastName,u.email,
-             u.emailValidated, u.mobile, u.blockedUntil, u.publicId)
-            from AppUser u
-            where (u.email = :username or u.mobile = :username)
-                          and u.namespace = :type
-            """)
+//    @Query("""
+//            SELECT new com.payment.service.dto.AppUserAuthProjectionDto(u.password, u.publicId, u.loginTries, u.namespace, u.firstName, u.lastName,u.email,
+//             u.emailValidated, u.mobile, u.blockedUntil, u.publicId)
+//            from AppUser u
+//            where (u.email = :username or u.mobile = :username)
+//                          and u.namespace = :type
+//            """)
     Optional<AppUser> findByEmailAndNamespace(String username, Namespace type);
     @Query("""
             SELECT new com.payment.service.dto.AppUserAuthProjectionDto(u.password, u.publicId, u.loginTries, u.namespace, u.firstName, u.lastName,u.email,
@@ -59,8 +59,8 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long > {
     Optional<AppUserAuthProjectionDto> findUserByCredentialAndNamespace(String username, Namespace namespace);
 
     @Modifying
-    @Query("UPDATE AppUser u SET u.loginTries = :count WHERE u.publicId = :userId")
-    void updateLoginAttempts(UUID userId, int count);
+    @Query("UPDATE AppUser u SET u.loginTries = :count WHERE u.id = :userId")
+    void updateLoginAttempts(Long userId, int count);
 
     @Modifying
     @Query("UPDATE AppUser u SET u.loginTries = u.loginTries + 1 WHERE u.id = :userId")
@@ -97,9 +97,9 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long > {
     void updatePassword(UUID userId, String password);
 
     @Query(nativeQuery = true, value = """
-            select r.name from public.user_roles ur inner join public.roles r on r.id = ur.role_id where user_id = :userId
+            select r.role_name from billpayment.user_role ur inner join billpayment.role r on r.id = ur.role_id where user_id = :userId
             """)
-    Set<RoleName> getUserRoleNames(UUID userId);
+    Set<RoleName> getUserRoleNames(Long userId);
 
     @Query("""
             SELECT new com.payment.service.dto.AppUserBasicProjectionDto(u.publicId, u.firstName, u.lastName, u.kycLevel,

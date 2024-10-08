@@ -6,6 +6,8 @@ import com.payment.service.enumerations.Namespace;
 import com.payment.service.exceptions.UserNotFoundException;
 import com.payment.service.exceptions.TokenRefreshException;
 import com.payment.service.repository.AuthorizationTokenRepository;
+import com.payment.service.services.UserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,8 @@ public class AuthorizationTokenService {
     private final AuthorizationTokenRepository authorizationTokenRepository;
 
     private final JwtUserAuthTokenUtil jwtUserAuthTokenUtil;
-
+    @Autowired
+    private UserDetailsService userService;
 
     public AuthorizationTokenService(@Value("${app.security.jwt.expiration}") long refreshTokenDurationMs,
                                      AuthorizationTokenRepository authorizationTokenRepository,
@@ -37,8 +40,9 @@ public class AuthorizationTokenService {
     }
 
     public AuthorizationToken createAuthorizationToken(UUID userId, Namespace namespace) {
+        var user = userService.getUserDetailsById(userId);
 
-        AuthorizationToken authorizationToken = new AuthorizationToken(userId, jwtUserAuthTokenUtil.generateAuthenticationToken(userId, namespace),
+        AuthorizationToken authorizationToken = new AuthorizationToken(user.getId(), userId, jwtUserAuthTokenUtil.generateAuthenticationToken(userId, namespace),
                 jwtUserAuthTokenUtil.generateRefreshToken(userId), Instant.now().plusMillis(refreshTokenDurationMs));
 
         return saveAuthorizationToken(authorizationToken);

@@ -69,13 +69,15 @@ public class UserService implements UserDetailsService{
         return getAuthTokenByUserId(user.getPublicId());
     }
 
-
+    @Transactional
     public void resetFailedLoginCount(UUID userId) {
-        userRepository.updateLoginAttempts(userId, 0);
+        AppUser user = userRepository.findByPublicId(userId).orElseThrow(()->new UserNotFoundException("User not found for the login attempts operation" + userId, false));
+        userRepository.updateLoginAttempts(user.getId(), 0);
     }
 
     public Set<Role> getAllUserRoles(UUID userId) {
-        return roleRepository.findAllUserRolesById(userId);
+        AppUser user = userRepository.findByPublicId(userId).orElseThrow(()->new UserNotFoundException("User not found for the login attempts operation" + userId, false));
+        return roleRepository.findAllUserRolesById(user.getId());
     }
 
     public AppUserBasicProjectionDto getUserBasicProjections(UUID userId) {
@@ -85,8 +87,9 @@ public class UserService implements UserDetailsService{
 
     }
 
-    public Set<RoleName> getUserRoleNames(UUID userId) {
-        return userRepository.getUserRoleNames(userId);
+    public Set<RoleName> getUserRoleNames(UUID userPublicId) {
+        AppUser user = userRepository.findByPublicId(userPublicId).orElseThrow(()->new UserNotFoundException("User not found for the login attempts operation" + userPublicId, false));
+        return userRepository.getUserRoleNames(user.getId());
     }
 
     public Namespace getNamespace(String username, Namespace namespace) {

@@ -18,6 +18,6 @@ public interface RoleRepository extends CrudRepository<Role, Long> {
     Optional<Role> findByRoleName(RoleName roleName);
 
     @Query(nativeQuery = true, value = "select * from billpayment.role join billpayment.user_role on role.id = user_role.role_id where user_id =:userId")
-    Set<Role> findAllUserRolesById(UUID userId);
+    Set<Role> findAllUserRolesById(Long userId);
 
 }

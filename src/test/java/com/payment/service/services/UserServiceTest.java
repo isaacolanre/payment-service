@@ -1,7 +1,6 @@
 package com.payment.service.services;
 
 import com.payment.service.dto.AppUserBasicProjectionDto;
-import com.payment.service.dto.AuthTokenDTO;
 import com.payment.service.dto.request.UserSignupRequest;
 import com.payment.service.enumerations.*;
 import com.payment.service.exceptions.UserAlreadyExistsException;
@@ -55,15 +54,17 @@ class UserServiceTest {
     private AppUser user;
     private Role role;
     private Account account;
-    private UUID userId;
+    private UUID userPublicId;
+    private Long userId;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        userId = UUID.randomUUID();
+        userPublicId = UUID.randomUUID();
+        userId = 1L;
         user = AppUser.builder()
-                .publicId(userId)
+                .publicId(userPublicId)
                 .username("user1")
                 .email("user1@example.com")
                 .password("encodedPassword")
@@ -80,9 +81,9 @@ class UserServiceTest {
 
     @Test
     void testGetUserDetailsById_Success() {
-        when(userRepository.findByPublicId(userId)).thenReturn(Optional.of(user));
+        when(userRepository.findByPublicId(userPublicId)).thenReturn(Optional.of(user));
 
-        AppUser result = userService.getUserDetailsById(userId);
+        AppUser result = userService.getUserDetailsById(userPublicId);
 
         assertNotNull(result);
         assertEquals("user1", result.getUsername());
@@ -90,9 +91,9 @@ class UserServiceTest {
 
     @Test
     void testGetUserDetailsById_UserNotFound() {
-        when(userRepository.findByPublicId(userId)).thenReturn(Optional.empty());
+        when(userRepository.findByPublicId(userPublicId)).thenReturn(Optional.empty());
 
-        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> userService.getUserDetailsById(userId));
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> userService.getUserDetailsById(userPublicId));
         assertEquals(USER_NOT_FOUND.name(), exception.getMessage());
     }
 
@@ -134,17 +135,17 @@ class UserServiceTest {
     @Test
     void testIncrementFailedLogins_UserBlocked() {
         user.setLoginTries(4);
-        when(userRepository.findByPublicId(userId)).thenReturn(Optional.of(user));
+        when(userRepository.findByPublicId(userPublicId)).thenReturn(Optional.of(user));
 
-        userService.incrementFailedLogins(userId, user.getLoginTries());
+        userService.incrementFailedLogins(userPublicId, user.getLoginTries());
 
-        verify(userRepository, times(1)).incrementFailedLoginCount(userId);
-        verify(userRepository, times(1)).updateUserBlockedUntilTime(any(LocalDateTime.class), eq(userId));
+        verify(userRepository, times(1)).incrementFailedLoginCount(userPublicId);
+        verify(userRepository, times(1)).updateUserBlockedUntilTime(any(LocalDateTime.class), eq(userPublicId));
     }
 
     @Test
     void testResetFailedLoginCount_Success() {
-        userService.resetFailedLoginCount(userId);
+        userService.resetFailedLoginCount(userPublicId);
         verify(userRepository, times(1)).updateLoginAttempts(userId, 0);
     }
 }

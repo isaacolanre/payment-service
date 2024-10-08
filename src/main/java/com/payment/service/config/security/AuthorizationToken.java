@@ -40,8 +40,8 @@ public class AuthorizationToken implements Serializable {
   @Column(name = "expiry_date", nullable = false)
   private Instant expiryDate;
 
-  public AuthorizationToken(UUID publicId, String accessToken, String refreshToken, Instant expiryDate) {
-
+  public AuthorizationToken(Long userId, UUID publicId, String accessToken, String refreshToken, Instant expiryDate) {
+    this.userId = userId;
     this.publicId = publicId;
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
