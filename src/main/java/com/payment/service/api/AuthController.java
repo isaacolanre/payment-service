@@ -1,6 +1,7 @@
 package com.payment.service.api;
 
 import com.payment.service.dto.AppUserBasicProjectionDto;
+import com.payment.service.dto.request.LoginRequestDto;
 import com.payment.service.dto.request.UserSignupRequest;
 import com.payment.service.services.UserService;
 import jakarta.validation.Valid;
@@ -19,13 +20,8 @@ public class AuthController {
 
     private final UserService userService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<AppUserBasicProjectionDto> registerUser(@Valid @RequestBody UserSignupRequest userSignupRequest) {
-        try {
-            AppUserBasicProjectionDto registeredUser = userService.registerUser(userSignupRequest);
-            return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
+    @PostMapping("/customer/login")
+    public ResponseEntity<Void> loginUser(@RequestBody LoginRequestDto loginRequest) {
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

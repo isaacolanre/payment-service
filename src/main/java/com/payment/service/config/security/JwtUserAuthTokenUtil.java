@@ -64,7 +64,9 @@ public class JwtUserAuthTokenUtil {
                 .withClaim("firstName", user.getFirstName())
                 .withClaim("lastName", user.getLastName())
                 .withClaim("email", user.getEmail())
+                .withClaim("namespace", user.getNamespace().name())
                 .withClaim("roles", roles)
+                .withClaim("minKycLevel", user.getKycLevel().name())
                 .withClaim("authorities", authorities)
                 .sign(Algorithm.HMAC256(secretKey));
     }

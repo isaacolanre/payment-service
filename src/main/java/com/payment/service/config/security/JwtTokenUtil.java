@@ -9,6 +9,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
@@ -22,11 +23,14 @@ import java.util.Base64;
 @Component
 public class JwtTokenUtil {
 
-    public boolean validateToken(String token, RSAPublicKey secret) {
+    @Value("${app.security.jwt.token.secret-key}")
+    private  String secretKey;
+
+    public boolean isValidateToken(String token, RSAPublicKey secret) {
 
         try {
             buildJWTVerifier(secret).verify(token.replace("Bearer ", ""));
-            return true;
+            return false;
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token: {}", e.getMessage());
             throw new BadCredentialsException("Invalid jwt token provided");
@@ -63,7 +67,7 @@ public class JwtTokenUtil {
     }
 
     private JWTVerifier buildJWTVerifier(RSAPublicKey rsaPublicKey) {
-        var algo = Algorithm.RSA256(rsaPublicKey, null);
+        var algo = Algorithm.HMAC256(secretKey);
         return JWT.require(algo).build();
     }
 }

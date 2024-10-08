@@ -67,7 +67,7 @@ public class AppUserRefreshTokenFilter extends OncePerRequestFilter {
         }
 
         final String requestRefreshToken = header.split(" ")[1].trim();
-        if (!jwtTokenUtil.validateToken(requestRefreshToken, rsaPublicKey)) {
+        if (jwtTokenUtil.isValidateToken(requestRefreshToken, rsaPublicKey)) {
             chain.doFilter(request, response);
             return;
         }

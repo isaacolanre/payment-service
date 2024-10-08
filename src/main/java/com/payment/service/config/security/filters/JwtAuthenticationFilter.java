@@ -68,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (!token.equalsIgnoreCase(persistedToken)) {
                 throw new BadCredentialsException("Invalid jwt token provided, please login again");
             }
-            if (!jwtUserAuthTokenUtil.validateToken(token, rsaPublicKey)) {
+            if (jwtUserAuthTokenUtil.isValidateToken(token, rsaPublicKey)) {
                 filterChain.doFilter(request, response);
                 return;
             }

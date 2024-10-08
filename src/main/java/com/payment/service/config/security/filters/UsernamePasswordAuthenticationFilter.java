@@ -53,7 +53,7 @@ public class UsernamePasswordAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
 
-        var urlMappings = List.of("/api/v1/users/login",  "/api/v1/users/authenticate/login");
+        var urlMappings = List.of("/api/v1/customer/login",  "/api/v1/customer/authenticate/login");
 
         if (urlMappings.stream().noneMatch(m -> request.getRequestURL().toString().endsWith(m))) {
             filterChain.doFilter(request, response);

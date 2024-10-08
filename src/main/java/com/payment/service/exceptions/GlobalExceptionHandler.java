@@ -55,6 +55,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, NOT_FOUND);
     }
 
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<RestResponse> handleUserAlreadyExistException(UserAlreadyExistsException ex) {
+
+        log.info(ex.getMessage(), ex.isPrintStackTrace() ? ex.getStackTrace() : getStackTrace(ex));
+
+        var response = new RestResponse(ex.getMessage(), BAD_REQUEST, InternalExceptionCode.USER_ALREADY_EXIST, "", Map.of());
+
+        return new ResponseEntity<>(response, NOT_FOUND);
+    }
+
 
     private String getStackTrace(InternalSystemException ex) {
 

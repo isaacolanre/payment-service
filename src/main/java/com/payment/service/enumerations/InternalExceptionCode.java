@@ -3,6 +3,7 @@ package com.payment.service.enumerations;
 public enum InternalExceptionCode {
 
     USER_NOT_FOUND("NOT FOUND"),
+    USER_ALREADY_EXIST("USER ALREADY EXIST"),
     AN_ERROR_OCCURED("PROCESSING ERROR"),
     AN_ERROR_OCCURRED("PROCESSING-ERROR-1000"),
 

@@ -110,7 +110,7 @@ public class UserService implements UserDetailsService{
 
     @Transactional
     public AppUserBasicProjectionDto registerUser(UserSignupRequest userSignupRequest) {
-        userRepository.getUserByEmail(userSignupRequest.getUsername())
+        userRepository.getUserByEmail(userSignupRequest.getEmail())
                 .ifPresent(user -> {
                     throw new UserAlreadyExistsException("Email is already in use!", false);
                 });
